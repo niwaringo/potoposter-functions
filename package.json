@@ -1,0 +1,24 @@
+{
+  "name": "potoposter-functions",
+  "version": "0.0.1",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "tsc",
+    "serve": "functions-framework --target=potoposterFunction --source=lib/index.js --signature-type=http",
+    "dev": "npm run build && npm run serve",
+    "lint": "biome lint src",
+    "format": "biome format src --write",
+    "deploy": "gcloud functions deploy potoposterFunction --gen2 --runtime=nodejs22 --region=us-central1 --entry-point=potoposterFunction --trigger-http --allow-unauthenticated"
+  },
+  "engines": {
+    "node": "22"
+  },
+  "dependencies": {
+    "@google-cloud/functions-framework": "^4.0.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.5",
+    "@types/node": "^24.10.1",
+    "typescript": "^5.9.3"
+  }
+}
