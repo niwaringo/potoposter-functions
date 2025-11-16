@@ -8,7 +8,7 @@
     "dev": "npm run build && npm run serve",
     "lint": "biome lint src",
     "format": "biome format src --write",
-    "deploy": "gcloud functions deploy potoposterFunction --gen2 --runtime=nodejs22 --region=us-central1 --entry-point=potoposterFunction --trigger-http --allow-unauthenticated"
+    "deploy": "gcloud builds submit  --region=asia-northeast1 --config cloudbuild.yaml ."
   },
   "engines": {
     "node": "22"

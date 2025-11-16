@@ -1,0 +1,19 @@
+steps:
+  - name: gcr.io/cloud-builders/npm
+    args: ["ci"]
+  - name: gcr.io/cloud-builders/npm
+    args: ["run", "build"]
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: gcloud
+    args:
+      - functions
+      - deploy
+      - potoposterFunction
+      - --gen2
+      - --runtime=nodejs22
+      - --region=asia-northeast1
+      - --entry-point=potoposterFunction
+      - --trigger-http
+      - --timeout=300s
+      - --max-instances=1
+      - --source=.
