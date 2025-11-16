@@ -19,17 +19,19 @@ export async function listUploads(): Promise<UploadObject | null> {
     autoPaginate: true,
   });
 
-  // GCSのobjects.listは名前の昇順で返すため、最初の要素が最古のオブジェクトになる。
-  const oldest = files.find((file) => file.name !== UPLOAD_PREFIX);
+  // 名前昇順で返るため、逆順に辿って最新（最も新しい名前）のオブジェクトを取得する。
+  const newest = [...files]
+    .reverse()
+    .find((file) => file.name !== UPLOAD_PREFIX);
 
-  if (!oldest) {
+  if (!newest) {
     return null;
   }
 
   // storage.googleapis.com向けの公開URLとFile識別子を返す。
   return {
-    publicUrl: oldest.publicUrl(),
-    objectName: oldest.name,
+    publicUrl: newest.publicUrl(),
+    objectName: newest.name,
   };
 }
 
