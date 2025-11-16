@@ -7,7 +7,12 @@ const storage = new Storage();
 const POTOPPOSTER_BUCKET = "potoposter";
 const UPLOAD_PREFIX = "uploads/";
 
-export async function listUploads(): Promise<string | null> {
+export interface UploadObject {
+  publicUrl: string;
+  objectName: string;
+}
+
+export async function listUploads(): Promise<UploadObject | null> {
   const bucket = storage.bucket(POTOPPOSTER_BUCKET);
   const [files] = await bucket.getFiles({
     prefix: UPLOAD_PREFIX,
@@ -21,6 +26,30 @@ export async function listUploads(): Promise<string | null> {
     return null;
   }
 
-  // storage.googleapis.com向けの公開URLを返す。
-  return oldest.publicUrl();
+  // storage.googleapis.com向けの公開URLとFile識別子を返す。
+  return {
+    publicUrl: oldest.publicUrl(),
+    objectName: oldest.name,
+  };
+}
+
+export async function deleteUpload(objectName: string): Promise<void> {
+  if (!objectName) {
+    throw new Error("objectName is required to delete an upload");
+  }
+
+  if (objectName === UPLOAD_PREFIX) {
+    throw new Error("Refusing to delete the uploads prefix itself");
+  }
+
+  if (!objectName.startsWith(UPLOAD_PREFIX)) {
+    throw new Error(
+      "Object outside uploads prefix cannot be deleted via deleteUpload",
+    );
+  }
+
+  const bucket = storage.bucket(POTOPPOSTER_BUCKET);
+  const file = bucket.file(objectName);
+
+  await file.delete();
 }
